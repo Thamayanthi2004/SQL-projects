@@ -1,0 +1,425 @@
+Create Schema Social_Media;
+
+Use Social_Media;
+
+-- List of Social Media Tables
+
+-- 1. Users
+CREATE TABLE Users (
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    profile_picture VARCHAR(255),
+    bio TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Posts
+CREATE TABLE Posts (
+    post_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    content TEXT,
+    media_url VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- 3. Comments
+CREATE TABLE Comments (
+    comment_id INT PRIMARY KEY AUTO_INCREMENT,
+    post_id INT,
+    user_id INT,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES Posts(post_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- 4. Likes
+CREATE TABLE Likes (
+    like_id INT PRIMARY KEY AUTO_INCREMENT,
+    post_id INT,
+    user_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES Posts(post_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- 5. Followers
+CREATE TABLE Followers (
+    follower_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    follower_user_id INT,
+    followed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (follower_user_id) REFERENCES Users(user_id)
+);
+
+-- 6. Followings
+CREATE TABLE Followings (
+    following_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    following_user_id INT,
+    followed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (following_user_id) REFERENCES Users(user_id)
+);
+
+-- 7. Messages
+CREATE TABLE Messages (
+    message_id INT PRIMARY KEY AUTO_INCREMENT,
+    sender_id INT,
+    receiver_id INT,
+    content TEXT,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES Users(user_id),
+    FOREIGN KEY (receiver_id) REFERENCES Users(user_id)
+);
+
+-- 8. MediaUploads
+CREATE TABLE MediaUploads (
+    media_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    media_type VARCHAR(50), -- e.g., 'image', 'video'
+    media_url VARCHAR(255),
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- 9. Reels
+CREATE TABLE Reels (
+    reel_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    media_url VARCHAR(255),
+    caption TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- 10. Shares
+CREATE TABLE Shares (
+    share_id INT PRIMARY KEY AUTO_INCREMENT,
+    post_id INT,
+    user_id INT,
+    shared_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES Posts(post_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- 11. Story
+CREATE TABLE Stories (
+    story_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    media_url VARCHAR(255),
+    story_type VARCHAR(50), -- e.g., 'image', 'video'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+	FOREIGN KEY (hashtag_id) REFERENCES Hashtags (hashtag_id)
+);
+
+-- 12. StoryNotes
+CREATE TABLE StoryNotes (
+    note_id INT PRIMARY KEY AUTO_INCREMENT,
+    story_id INT,
+    user_id INT,
+    note_content TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (story_id) REFERENCES Stories(story_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+ -- 13. SavedPosts
+CREATE TABLE SavedPosts (
+    saved_post_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    post_id INT,
+    saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (post_id) REFERENCES Posts(post_id)
+);
+
+ -- 14. Tags
+CREATE TABLE Tags (
+    tag_id INT PRIMARY KEY AUTO_INCREMENT,
+    tag_name VARCHAR(50) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ -- 15. Hashtags
+CREATE TABLE Hashtags (
+    hashtag_id INT PRIMARY KEY AUTO_INCREMENT,
+    hashtag_name VARCHAR(50) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ -- 16. Notifications
+CREATE TABLE Notifications (
+    notification_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    message TEXT,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- Insert data into Users
+INSERT INTO Users (username, email, password, profile_picture, bio) VALUES
+('john_doe', 'john@example.com', 'password123', 'profile1.jpg', 'Love coding and coffee!'),
+('jane_smith', 'jane@example.com', 'password456', 'profile2.jpg', 'Traveler and foodie.'),
+('mike_brown', 'mike@example.com', 'password789', 'profile3.jpg', 'Fitness enthusiast.'),
+('alice_wong', 'alice@example.com', 'passwordabc', 'profile4.jpg', 'Photographer and nature lover.'),
+('david_clark', 'david@example.com', 'passworddef', 'profile5.jpg', 'Tech enthusiast and blogger.'),
+('emma_jones', 'emma@example.com', 'passwordghi', 'profile6.jpg', 'Bookworm and writer.'),
+('oliver_martin', 'oliver@example.com', 'passwordjkl', 'profile7.jpg', 'Music producer and DJ.'),
+('sophia_lee', 'sophia@example.com', 'passwordmno', 'profile8.jpg', 'Fitness coach and wellness expert.'),
+('liam_garcia', 'liam@example.com', 'passwordpqr', 'profile9.jpg', 'Gamer and streamer.'),
+('ava_king', 'ava@example.com', 'passwordstu', 'profile10.jpg', 'Fashion designer and artist.');
+
+-- Insert data into Posts
+INSERT INTO Posts (user_id, content, media_url) VALUES
+(1, 'Hello, world! This is my first post.', NULL),
+(2, 'Just finished a great workout!', 'workout.jpg'),
+(3, 'Check out this cool video I found!', 'video.mp4'),
+(4, 'Loving the new camera I bought!', 'camera.jpg'),
+(5, 'Here’s a blog post I wrote about the latest tech trends.', NULL),
+(6, 'Currently reading an amazing book.', 'book.jpg'),
+(7, 'New track dropping soon! Stay tuned.', 'music.jpg'),
+(8, 'Morning yoga session completed.', 'yoga.jpg'),
+(9, 'Can’t wait for the new game release!', 'game.jpg'),
+(10, 'Just finished a new design for a client.', 'design.jpg');
+
+-- Insert data into Comments
+INSERT INTO Comments (post_id, user_id, content) VALUES
+(1, 2, 'Welcome to the platform!'),
+(2, 3, 'Great job on your workout!'),
+(3, 1, 'That video is awesome!'),
+(4, 5, 'I love your photography!'),
+(5, 6, 'Very insightful blog post, David.'),
+(6, 4, 'Which book are you reading?'),
+(7, 9, 'Looking forward to hearing it!'),
+(8, 10, 'Morning yoga is the best!'),
+(9, 7, 'I’m so hyped for that game too!'),
+(10, 8, 'Amazing design, Ava!');
+
+-- Insert data into Likes
+INSERT INTO Likes (post_id, user_id) VALUES
+(1, 2),
+(2, 1),
+(3, 2),
+(3, 3),
+(4, 6),
+(5, 4),
+(6, 5),
+(7, 7),
+(8, 9),
+(9, 10);
+
+-- Insert data into Followers
+INSERT INTO Followers (user_id, follower_user_id) VALUES
+(1, 2), 
+(2, 3), 
+(3, 1), 
+(4, 5), 
+(5, 6), 
+(6, 4), 
+(7, 8), 
+(8, 9), 
+(9, 10), 
+(10, 1); 
+
+
+-- Insert data into Followings
+INSERT INTO Followings (user_id, following_user_id) VALUES
+(2, 1),
+(3, 2), 
+(1, 3),
+(5, 4),
+(6, 5), 
+(4, 6), 
+(8, 7), 
+(9, 8), 
+(10, 9), 
+(1, 10); 
+
+-- Insert data into Messages
+INSERT INTO Messages (sender_id, receiver_id, content) VALUES
+(1, 2, 'Hey Jane, how are you?'),
+(2, 1, 'I am good, John! How about you?'),
+(3, 1, 'Hi John, nice to connect with you!'),
+(4, 5, 'Alice, your photos are stunning!'),
+(5, 4, 'Thank you, David!'),
+(6, 7, 'Oliver, your new track is fire!'),
+(7, 6, 'Thanks, Emma!'),
+(8, 9, 'Liam, any new games you’re playing?'),
+(9, 8, 'Yes, I just started a new RPG.'),
+(10, 1, 'John, I love your latest post!');
+
+-- Insert data into MediaUploads
+INSERT INTO MediaUploads (user_id, media_type, media_url) VALUES
+(1, 'image', 'image1.jpg'),
+(2, 'video', 'video1.mp4'),
+(3, 'image', 'image2.jpg'),
+(4, 'image', 'photo1.jpg'),
+(5, 'image', 'blog1.jpg'),
+(6, 'image', 'book1.jpg'),
+(7, 'audio', 'track1.mp3'),
+(8, 'image', 'yoga1.jpg'),
+(9, 'image', 'game1.jpg'),
+(10, 'image', 'design1.jpg');
+
+-- Insert data into Reels
+INSERT INTO Reels (user_id, media_url, caption) VALUES
+(1, 'reel1.mp4', 'Check out my latest reel!'),
+(2, 'reel2.mp4', 'A beautiful sunset'),
+(3, 'reel3.mp4', 'Workout highlights'),
+(4, 'reel4.mp4', 'Nature walk'),
+(5, 'reel5.mp4', 'Tech tips'),
+(6, 'reel6.mp4', 'Book review'),
+(7, 'reel7.mp4', 'DJ set preview'),
+(8, 'reel8.mp4', 'Yoga routine'),
+(9, 'reel9.mp4', 'Game highlights'),
+(10, 'reel10.mp4', 'Fashion design process');
+
+-- Insert data into Shares
+INSERT INTO Shares (post_id, user_id) VALUES
+(1, 2),
+(2, 1),
+(3, 3),
+(4, 4),
+(5, 5),
+(6, 6),
+(7, 7),
+(8, 8),
+(9, 9),
+(10, 10);
+
+-- Insert data into Stories
+INSERT INTO Stories (user_id, media_url, story_type, expires_at) VALUES
+(1, 'story1.jpg', 'image', NOW() + INTERVAL 24 HOUR),
+(2, 'story2.mp4', 'video', NOW() + INTERVAL 24 HOUR),
+(3, 'story3.jpg', 'image', NOW() + INTERVAL 24 HOUR),
+(4, 'story4.jpg', 'image', NOW() + INTERVAL 24 HOUR),
+(5, 'story5.mp4', 'video', NOW() + INTERVAL 24 HOUR),
+(6, 'story6.jpg', 'image', NOW() + INTERVAL 24 HOUR),
+(7, 'story7.mp4', 'video', NOW() + INTERVAL 24 HOUR),
+(8, 'story8.jpg', 'image', NOW() + INTERVAL 24 HOUR),
+(9, 'story9.mp4', 'video', NOW() + INTERVAL 24 HOUR),
+(10, 'story10.jpg', 'image', NOW() + INTERVAL 24 HOUR);
+
+-- Insert data into StoryNotes
+INSERT INTO StoryNotes (story_id, user_id, note_content) VALUES
+(1, 1, 'Enjoying the day!'),
+(2, 2, 'Great memories'),
+(3, 3, 'Fitness goals!'),
+(4, 4, 'Loving nature!'),
+(5, 5, 'Tech insights'),
+(6, 6, 'Book recommendation'),
+(7, 7, 'Upcoming music'),
+(8, 8, 'Yoga inspiration'),
+(9, 9, 'Game strategies'),
+(10, 10, 'Fashion ideas');
+
+-- Insert data into SavedPosts
+INSERT INTO SavedPosts (user_id, post_id) VALUES
+(1, 2),
+(2, 3),
+(3, 4),
+(4, 1),
+(5, 6),
+(6, 7),
+(7, 8),
+(8, 9),
+(9, 10),
+(10, 5);
+
+-- Insert data into Tags
+INSERT INTO Tags (tag_name) VALUES
+('travel'),
+('food'),
+('fitness'),
+('technology'),
+('music'),
+('photography'),
+('art'),
+('fashion'),
+('gaming'),
+('nature');
+
+-- Insert data into Hashtags
+INSERT INTO Hashtags (hashtag_name) VALUES
+('#love'),
+('#instagood'),
+('#photooftheday'),
+('#fashion'),
+('#beautiful'),
+('#happy'),
+('#cute'),
+('#tbt'),
+('#followme'),
+('#nature');
+
+-- Insert data into Notifications
+INSERT INTO Notifications (user_id, message) VALUES
+(1, 'Jane liked your post.'),
+(2, 'Mike commented on your post.'),
+(3, 'John started following you.'),
+(4, 'David liked your photo.'),
+(5, 'Emma mentioned you in a comment.'),
+(6, 'Oliver followed you back.'),
+(7, 'Sophia sent you a message.'),
+(8, 'Liam liked your reel.'),
+(9, 'Ava shared your post.'),
+(10, 'John tagged you in a post.');
+
+
+-- Using JOIN query to get all posts with user info
+SELECT Posts.post_id, Users.username, Posts.content, Posts.media_url
+FROM Posts
+JOIN Users ON Posts.user_id = Users.user_id;
+
+SELECT Comments.comment_id, Users.username, Posts.content AS PostContent, Comments.content AS CommentContent
+FROM Comments
+JOIN Users ON Comments.user_id = Users.user_id
+JOIN Posts ON Comments.post_id = Posts.post_id;
+
+SELECT Likes.like_id, Users.username, Posts.content AS PostContent
+FROM Likes
+JOIN Users ON Likes.user_id = Users.user_id
+JOIN Posts ON Likes.post_id = Posts.post_id;
+
+SELECT Messages.message_id, U1.username AS SenderUsername, U2.username AS ReceiverUsername, Messages.content
+FROM Messages
+JOIN Users U1 ON Messages.sender_id = U1.user_id
+JOIN Users U2 ON Messages.receiver_id = U2.user_id;
+
+SELECT Reels.reel_id, Users.username, Reels.caption, Reels.media_url
+FROM Reels
+JOIN Users ON Reels.user_id = Users.user_id;
+
+SELECT SavedPosts.saved_post_id, Users.username, Posts.content AS PostContent
+FROM SavedPosts
+JOIN Users ON SavedPosts.user_id = Users.user_id
+JOIN Posts ON SavedPosts.post_id = Posts.post_id;
+
+SELECT Notifications.notification_id, Users.username, Notifications.message, Notifications.is_read
+FROM Notifications
+JOIN Users ON Notifications.user_id = Users.user_id;
+
+-- Using UPDATE query to modify a user's bio
+UPDATE Users
+SET bio = 'Updated bio !'
+WHERE username = 'john_doe';
+
+-- Using ALTER TABLE statement to add a new column for post views
+ALTER TABLE Posts
+ADD COLUMN views INT DEFAULT 0;
+
+-- Using LIKE clause to search for specific content in posts
+SELECT * FROM Posts
+WHERE content LIKE '%workout%';
+
+-- Using DELETE statement to remove a post
+DELETE FROM Posts
+WHERE post_id = 1;
